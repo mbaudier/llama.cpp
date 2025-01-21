@@ -17,14 +17,6 @@ Recommends: curl
 Description: Inference of LLMs in pure C/C++ (shared library)
  Llama.cpp inference of LLMs in pure C/C++ (shared library).
 
-Package: libllava-shared
-Architecture: any
-Priority: optional
-Depends: ${shlibs:Depends},
- libggml
-Description: Llava (shared library)
- Llama.cpp llava (shared library).
-
 Package: llama-cpp-cli
 Architecture: any
 Priority: optional
