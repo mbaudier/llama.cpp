@@ -22,7 +22,7 @@ Package: llama-cpp-cli
 Architecture: any
 Priority: optional
 Depends: ${misc:Depends}, ${shlibs:Depends},
- libllama, curl
+ libllama, ggml, curl
 Description: Inference of LLMs in pure C/C++ (CLI)
  Llama.cpp inference of LLMs in pure C/C++ (CLI).
 
@@ -30,7 +30,7 @@ Package: llama-cpp-server
 Architecture: any
 Priority: optional
 Depends: ${misc:Depends}, ${shlibs:Depends},
- libllama, curl, openssl
+ libllama, ggml, curl, openssl
 Description: Inference of LLMs in pure C/C++ (CLI)
  Llama.cpp inference of LLMs in pure C/C++ (CLI).
 
