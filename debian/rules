@@ -29,7 +29,7 @@ override_dh_auto_configure:
 	-DLLAMA_ALL_WARNINGS=OFF \
 	-DLLAMA_BUILD_TESTS=OFF \
 	-DLLAMA_BUILD_SERVER=ON \
-	-DLLAMA_USE_CURL=ON \
+	-DLLAMA_CURL=ON \
 	-DLLAMA_SERVER_SSL=ON \
 
 override_dh_auto_install:
