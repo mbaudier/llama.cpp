@@ -1,0 +1,39 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+#export DH_VERBOSE = 1
+
+# multiarch
+include /usr/share/dpkg/architecture.mk
+
+build_multiarch=build/$(DEB_HOST_MULTIARCH)
+install_lib_multiarch=debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)
+
+# parallelism
+DEB_BUILD_OPTIONS ?= parallel=8
+
+%:
+# Use build/ for output, so that it is in the .gitignore of upstream
+	dh $@ --buildsystem=cmake --builddirectory=$(build_multiarch)
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	-DCMAKE_LIBRARY_ARCHITECTURE="$(DEB_HOST_MULTIARCH)" \
+	-DCMAKE_PROJECT_llama.cpp_INCLUDE=debian/cmake/debian-llama.cpp.cmake \
+	-DBUILD_SHARED_LIBS=ON \
+	-DGGML_RPC=ON \
+	-DLLAMA_ALL_WARNINGS=OFF \
+	-DLLAMA_BUILD_TESTS=OFF \
+	-DLLAMA_BUILD_SERVER=ON \
+	-DLLAMA_SERVER_SSL=ON \
+
+
+# FIXME we disable LLAMA_ALL_WARNINGS so that ggml_get_flags() CMake function do not get called
+# as it is available deep in GGML and not properly published
+
+override_dh_install:
+	dh_install
+	find $(DEBIAN_BASE_DIR) -type d -empty -delete
+
+override_dh_auto_test:
+	# tests which depends on remote location are failing
+	dh_auto_test || true

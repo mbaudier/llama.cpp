@@ -1,0 +1,3 @@
+/usr/bin/test-*
+/usr/bin/llama-*
+/usr/bin/*.py
