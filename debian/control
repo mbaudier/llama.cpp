@@ -2,7 +2,7 @@ Source: llama-cpp
 Section: science
 Priority: optional
 Maintainer: Mathieu Baudier <mbaudier@argeo.org>
-Build-Depends: debhelper-compat (= 13), pkg-config, cmake-data, cmake, cpio, curl, openssl, libcurl4-openssl-dev, file, git,
+Build-Depends: debhelper-compat (= 13), pkg-config, cmake-data, cmake, cpio, curl, libssl-dev, libcurl4-openssl-dev, file, git,
 	ggml-dev
 Standards-Version: 4.5.1
 Homepage: https://github.com/ggerganov/llama.cpp
