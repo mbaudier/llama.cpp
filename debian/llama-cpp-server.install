@@ -1,1 +1,2 @@
 /usr/bin/llama-server
+/usr/libexec/*/ggml/llama-server
