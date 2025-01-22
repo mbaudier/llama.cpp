@@ -1,5 +1,5 @@
 /usr/include/llama*.h
 include/llama-cpp.h /usr/include/
 
-/usr/lib/pkgconfig/*.pc
+/usr/lib/*/pkgconfig/*.pc
 /usr/lib/*/cmake/llama/llama-*.cmake

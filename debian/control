@@ -38,7 +38,7 @@ Package: libllama-dev
 Architecture: any
 Priority: optional
 Depends: ${misc:Depends},
- ggml-dev, libllama
+ ggml-dev, libllama (= ${binary:Version})
 Description: Inference of LLMs in pure C/C++ (development files)
  Llama.cpp inference of LLMs in pure C/C++ (development files).
 
@@ -46,6 +46,6 @@ Package: llama-cpp-dev
 Architecture: any
 Priority: optional
 Depends: ${misc:Depends},
- libllama-dev, libcurl4-openssl-dev, libssl-dev
+ libllama-dev (= ${binary:Version}), libcurl4-openssl-dev, libssl-dev
 Description: Inference of LLMs in pure C/C++ (common static library)
  Llama.cpp inference of LLMs in pure C/C++ (common static library).
