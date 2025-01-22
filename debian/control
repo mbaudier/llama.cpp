@@ -31,8 +31,16 @@ Architecture: any
 Priority: optional
 Depends: ${misc:Depends}, ${shlibs:Depends},
  libllama, ggml, curl, openssl
-Description: Inference of LLMs in pure C/C++ (CLI)
- Llama.cpp inference of LLMs in pure C/C++ (CLI).
+Description: Inference of LLMs in pure C/C++ (server)
+ Llama.cpp inference of LLMs in pure C/C++ (server).
+
+Package: llama-cpp-quantize
+Architecture: any
+Priority: optional
+Depends: ${misc:Depends}, ${shlibs:Depends},
+ libllama, ggml
+Description: Inference of LLMs in pure C/C++ (quantize)
+ Llama.cpp inference of LLMs in pure C/C++ (quantize).
 
 Package: libllama-dev
 Architecture: any
