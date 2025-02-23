@@ -5,8 +5,7 @@ Maintainer: Mathieu Baudier <mbaudier@argeo.org>
 Build-Depends: debhelper-compat (= 13), pkgconf,
 	cmake-data, cmake,
 	ggml-dev,
-	curl,
-#	libssl-dev, libcurl4-openssl-dev
+	libcurl4-openssl-dev,
 Standards-Version: 4.7.0
 Vcs-Git: https://git.djapps.eu/pkg/ggml/sources/llama.cpp
 Vcs-Browser: https://git.djapps.eu/?p=pkg/ggml/sources/llama.cpp;a=summary
