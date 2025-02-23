@@ -14,12 +14,15 @@ install_libexec_multiarch=debian/tmp/usr/libexec/$(DEB_HOST_MULTIARCH)
 # parallelism
 DEB_BUILD_OPTIONS ?= parallel=8
 
+# hardening
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
 %:
 # Use build/ for output, so that it is in the .gitignore of upstream
 	dh $@ --buildsystem=cmake --builddirectory=$(build_multiarch)
 
-# FIXME we disable LLAMA_ALL_WARNINGS so that ggml_get_flags() CMake function do not get called
-# as it is available deep in GGML build scripts and not published
+# Note: we disable LLAMA_ALL_WARNINGS so that ggml_get_flags() CMake function do not get called
+# as it is available deep in GGML build scripts and reset the compiler/linker flags
 override_dh_auto_configure:
 	dh_auto_configure -- \
 	-DCMAKE_LIBRARY_ARCHITECTURE="$(DEB_HOST_MULTIARCH)" \
@@ -29,9 +32,9 @@ override_dh_auto_configure:
 	-DGGML_BACKEND_DL=ON \
 	-DLLAMA_ALL_WARNINGS=OFF \
 	-DLLAMA_BUILD_TESTS=OFF \
-	-DLLAMA_BUILD_SERVER=ON \
+	-DLLAMA_BUILD_SERVER=OFF \
 	-DLLAMA_CURL=ON \
-	-DLLAMA_SERVER_SSL=ON \
+	-DLLAMA_SERVER_SSL=OFF \
 
 override_dh_auto_install:
 	dh_auto_install

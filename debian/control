@@ -4,56 +4,55 @@ Priority: optional
 Maintainer: Mathieu Baudier <mbaudier@argeo.org>
 Build-Depends: debhelper-compat (= 13), pkg-config, cmake-data, cmake, cpio, curl, libssl-dev, libcurl4-openssl-dev, file, git,
 	ggml-dev
-Standards-Version: 4.5.1
-Homepage: https://github.com/ggerganov/llama.cpp
+Standards-Version: 4.7.0
+Vcs-Git: https://git.djapps.eu/pkg/ggml/sources/llama.cpp
+Vcs-Browser: https://git.djapps.eu/?p=pkg/ggml/sources/llama.cpp;a=summary
+Homepage: https://github.com/ggml-org/llama.cpp
 Rules-Requires-Root: binary-targets
 
 Package: libllama
-Priority: optional
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends},
  libggml
 Description: Inference of LLMs in pure C/C++ (shared library)
- Llama.cpp inference of LLMs in pure C/C++ (shared library).
+ llama.cpp leverages the ggml tensor library in order to run
+ large language models (LLMs) provided in the GGUF file format.
 
 Package: llama-cpp-cli
 Architecture: any
-Priority: optional
 Depends: ${misc:Depends}, ${shlibs:Depends},
  libllama, ggml, curl
 Description: Inference of LLMs in pure C/C++ (CLI)
- Llama.cpp inference of LLMs in pure C/C++ (CLI).
-
-Package: llama-cpp-server
-Architecture: any
-Priority: optional
-Depends: ${misc:Depends}, ${shlibs:Depends},
- libllama, ggml, curl, openssl
-Description: Inference of LLMs in pure C/C++ (server)
- Llama.cpp inference of LLMs in pure C/C++ (server).
+ A command line utility wrapping most features provided by libllama.
+ It typically allows one to run one-shot prompts or to "chat"
+ with a large language model.
 
 Package: llama-cpp-quantize
 Architecture: any
-Priority: optional
 Depends: ${misc:Depends}, ${shlibs:Depends},
  libllama, ggml
 Description: Inference of LLMs in pure C/C++ (quantize)
- Llama.cpp inference of LLMs in pure C/C++ (quantize).
+ A command line utility to "quantize" a large language model provided
+ as a GGUF file. Quantizing is process of reducing the precision of
+ the underlying neural-network at  aminimal cost to its accuracy.
 
 Package: libllama-dev
+Section: libdevel
 Architecture: any
-Priority: optional
 Depends: ${misc:Depends},
  ggml-dev, libllama (= ${binary:Version})
 Description: Inference of LLMs in pure C/C++ (development files)
- Llama.cpp inference of LLMs in pure C/C++ (development files).
+ Development files required for building software based on the
+ stable and documented llama.cpp API.
 
 Package: llama-cpp-dev
+Section: libdevel
 Architecture: any
-Priority: optional
 Depends: ${misc:Depends},
  libllama-dev (= ${binary:Version}), libcurl4-openssl-dev, libssl-dev
 Description: Inference of LLMs in pure C/C++ (common static library)
- Llama.cpp inference of LLMs in pure C/C++ (common static library).
+ Development files and static library providing a framework command to the
+ various examples. It allows one to quickly to develop a command line utility
+ but is expected to provide a less stable API than libllama-dev.
