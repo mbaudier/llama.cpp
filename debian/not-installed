@@ -1,6 +1,10 @@
+# Most executables produced are not stable enough to be distributed
 /usr/bin/llama-*
 /usr/libexec/*/ggml/llama-*
 
+# Python is not supported
+/usr/bin/*.py
+
+# Test executables are not distributed
 /usr/bin/test-*
 
-/usr/bin/*.py

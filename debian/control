@@ -24,16 +24,17 @@ Description: Inference of large language models in pure C/C++ (shared library)
  llama.cpp leverages the ggml tensor library in order to run
  large language models (LLMs) provided in the GGUF file format.
 
+# We only distribute a few very useful tools, with stable CLI options
 Package: llama-cpp-tools
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends},
  libllama0, ggml, curl
 Description: Inference of large language models in pure C/C++ (tools)
- llama-cli: utility tool wrapping most features provided by libllama.
+ llama-cli: versatile tool wrapping most features provided by libllama.
  It typically allows one to run one-shot prompts or to "chat"
  with a large language model.
  .
- llama-quantize: utility tool to "quantize" a large language model
+ llama-quantize: utility to "quantize" a large language model
  GGUF file. Quantizing is the process of reducing the precision of
  the underlying neural-network at  aminimal cost to its accuracy.
  .
