@@ -1,0 +1,41 @@
+From: Mathieu Baudier <mbaudier@argeo.org>
+Date: Sun, 23 Feb 2025 11:31:46 +0100
+Subject: improve-cmake-build
+
+---
+ cmake/build-info.cmake | 4 ++++
+ src/CMakeLists.txt     | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/cmake/build-info.cmake b/cmake/build-info.cmake
+index c1a456e..66072b3 100644
+--- a/cmake/build-info.cmake
++++ b/cmake/build-info.cmake
+@@ -1,3 +1,5 @@
++if(NOT DEFINED BUILD_NUMBER) # Debian patch
++
+ set(BUILD_NUMBER 0)
+ set(BUILD_COMMIT "unknown")
+ set(BUILD_COMPILER "unknown")
+@@ -39,6 +41,8 @@ if(Git_FOUND)
+     endif()
+ endif()
+ 
++endif() # END Debian patch
++
+ if(MSVC)
+     set(BUILD_COMPILER "${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}")
+     set(BUILD_TARGET ${CMAKE_VS_PLATFORM_NAME})
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index e1b02e4..5883a5a 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -38,4 +38,8 @@ if (BUILD_SHARED_LIBS)
+     set_target_properties(llama PROPERTIES POSITION_INDEPENDENT_CODE ON)
+     target_compile_definitions(llama PRIVATE LLAMA_BUILD)
+     target_compile_definitions(llama PUBLIC  LLAMA_SHARED)
++	if(DEFINED BUILD_NUMBER)
++        message(STATUS "Set llama shared library version to 0.0.${BUILD_NUMBER}")
++    	set_target_properties(llama PROPERTIES VERSION 0.0.${BUILD_NUMBER} SOVERSION 0)
++    endif()
+ endif()

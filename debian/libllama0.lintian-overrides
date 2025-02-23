@@ -1,1 +1,3 @@
-libllama0: no-symbols-control-file usr/lib/x86_64-linux-gnu/libllama.so
+# According to https://wiki.debian.org/UsingSymbolsFiles
+# "For C++ libraries it is often better not to ship symbols files."
+libllama0: no-symbols-control-file usr/lib/x86_64-linux-gnu/libllama.so.*

@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.14) # for add_link_options and implicit target directories.
-
 # GGML dependencies
 # libggml-base as external library
 find_library(GGML_BASE_LOCATION ggml-base)
@@ -20,4 +18,7 @@ add_compile_definitions(NDEBUG)
 
 install(DIRECTORY ${CMAKE_BINARY_DIR}/common/ DESTINATION lib/${CMAKE_LIBRARY_ARCHITECTURE}/llama.cpp/common FILES_MATCHING PATTERN "*.a" )
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/common/ DESTINATION include/llama.cpp/common FILES_MATCHING PATTERN "*.h" )
+
+# build number, in line with changelog
+set(BUILD_NUMBER 4719)
 

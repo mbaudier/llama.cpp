@@ -1,5 +1,8 @@
 /usr/include/llama*.h
 include/llama-cpp.h /usr/include/
 
+# Symbolic links
+/usr/lib/*/libllama.so
+
 /usr/lib/*/pkgconfig/*.pc
 /usr/lib/*/cmake/llama/llama-*.cmake
