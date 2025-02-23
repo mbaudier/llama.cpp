@@ -2,48 +2,57 @@ Source: llama-cpp
 Section: science
 Priority: optional
 Maintainer: Mathieu Baudier <mbaudier@argeo.org>
-Build-Depends: debhelper-compat (= 13), pkg-config, cmake-data, cmake, cpio, curl, libssl-dev, libcurl4-openssl-dev, file, git,
-	ggml-dev
+Build-Depends: debhelper-compat (= 13), pkgconf,
+	cmake-data, cmake,
+	ggml-dev,
+	curl,
+#	libssl-dev, libcurl4-openssl-dev
 Standards-Version: 4.7.0
 Vcs-Git: https://git.djapps.eu/pkg/ggml/sources/llama.cpp
 Vcs-Browser: https://git.djapps.eu/?p=pkg/ggml/sources/llama.cpp;a=summary
 Homepage: https://github.com/ggml-org/llama.cpp
 Rules-Requires-Root: binary-targets
 
-Package: libllama
+Package: libllama0
+Section: libs
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends},
- libggml
-Description: Inference of LLMs in pure C/C++ (shared library)
+ libggml0
+Description: Inference of large language models in pure C/C++ (shared library)
  llama.cpp leverages the ggml tensor library in order to run
  large language models (LLMs) provided in the GGUF file format.
 
-Package: llama-cpp-cli
+Package: llama-cpp-tools
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends},
- libllama, ggml, curl
-Description: Inference of LLMs in pure C/C++ (CLI)
- A command line utility wrapping most features provided by libllama.
+ libllama0, ggml, curl
+Description: Inference of large language models in pure C/C++ (tools)
+ llama-cli: utility tool wrapping most features provided by libllama.
  It typically allows one to run one-shot prompts or to "chat"
  with a large language model.
-
-Package: llama-cpp-quantize
-Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends},
- libllama, ggml
-Description: Inference of LLMs in pure C/C++ (quantize)
- A command line utility to "quantize" a large language model provided
- as a GGUF file. Quantizing is process of reducing the precision of
+ .
+ llama-quantize: utility tool to "quantize" a large language model
+ GGUF file. Quantizing is the process of reducing the precision of
  the underlying neural-network at  aminimal cost to its accuracy.
+ .
+ llama-bench: benchmarking of large language models or
+ ggml backends.
 
-Package: libllama-dev
+#Package: llama-cpp-server
+#Architecture: any
+#Depends: ${misc:Depends}, ${shlibs:Depends},
+# libllama0, ggml, curl, openssl
+#Description: Inference of large language models in pure C/C++ (server)
+# A simple HTTP server used to remotely run large language models.
+
+Package: libllama0-dev
 Section: libdevel
 Architecture: any
 Depends: ${misc:Depends},
- ggml-dev, libllama (= ${binary:Version})
-Description: Inference of LLMs in pure C/C++ (development files)
+ ggml-dev, libllama0 (= ${binary:Version})
+Description: Inference of large language models in pure C/C++ (development files)
  Development files required for building software based on the
  stable and documented llama.cpp API.
 
@@ -51,8 +60,8 @@ Package: llama-cpp-dev
 Section: libdevel
 Architecture: any
 Depends: ${misc:Depends},
- libllama-dev (= ${binary:Version}), libcurl4-openssl-dev, libssl-dev
-Description: Inference of LLMs in pure C/C++ (common static library)
+ libllama0-dev (= ${binary:Version}), libcurl4-openssl-dev, libssl-dev
+Description: Inference of large language models in pure C/C++ (common static library)
  Development files and static library providing a framework command to the
  various examples. It allows one to quickly to develop a command line utility
  but is expected to provide a less stable API than libllama-dev.

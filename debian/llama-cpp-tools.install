@@ -1,0 +1,8 @@
+/usr/bin/llama-cli
+/usr/libexec/*/ggml/llama-cli
+
+/usr/bin/llama-quantize
+/usr/libexec/*/ggml/llama-quantize
+
+/usr/bin/llama-bench
+/usr/libexec/*/ggml/llama-bench
