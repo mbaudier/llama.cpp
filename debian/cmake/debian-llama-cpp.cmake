@@ -20,5 +20,5 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/common/ DESTINATION lib/${CMAKE_LIBRARY_AR
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/common/ DESTINATION include/llama.cpp/common FILES_MATCHING PATTERN "*.h" )
 
 # build number, in line with changelog
-set(BUILD_NUMBER 4719)
+set(BUILD_NUMBER 4853)
 

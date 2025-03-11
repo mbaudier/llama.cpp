@@ -42,7 +42,7 @@ enum stop_type {
     STOP_TYPE_LIMIT,
 };
 
-// state diagram: https://github.com/ggerganov/llama.cpp/pull/9283
+// state diagram: https://github.com/ggml-org/llama.cpp/pull/9283
 enum slot_state {
     SLOT_STATE_IDLE,
     SLOT_STATE_STARTED, // TODO: this state is only used for setting up the initial prompt processing; maybe merge it with launch_slot_with_task in the future
@@ -131,9 +131,9 @@ struct slot_params {
             lora.push_back({{"id", i}, {"scale", this->lora[i].scale}});
         }
 
-        std::vector<std::string> grammar_trigger_words;
-        for (const auto & trigger : sampling.grammar_trigger_words) {
-            grammar_trigger_words.push_back(trigger.word);
+        auto grammar_triggers = json::array();
+        for (const auto & trigger : sampling.grammar_triggers) {
+            grammar_triggers.push_back(trigger.to_json<json>());
         }
 
         return json {
@@ -170,8 +170,8 @@ struct slot_params {
             {"n_probs",                   sampling.n_probs},
             {"min_keep",                  sampling.min_keep},
             {"grammar",                   sampling.grammar},
-            {"grammar_trigger_words",     grammar_trigger_words},
-            {"grammar_trigger_tokens",    sampling.grammar_trigger_tokens},
+            {"grammar_lazy",              sampling.grammar_lazy},
+            {"grammar_triggers",          grammar_triggers},
             {"preserved_tokens",          sampling.preserved_tokens},
             {"chat_format",               common_chat_format_name(oaicompat_chat_format)},
             {"samplers",                  samplers},
@@ -274,7 +274,7 @@ struct server_task {
         params.speculative.p_min = json_value(data, "speculative.p_min", defaults.speculative.p_min);
 
         params.speculative.n_min = std::min(params.speculative.n_max, params.speculative.n_min);
-        params.speculative.n_min = std::max(params.speculative.n_min, 2);
+        params.speculative.n_min = std::max(params.speculative.n_min, 0);
         params.speculative.n_max = std::max(params.speculative.n_max, 0);
 
         // Use OpenAI API logprobs only if n_probs wasn't provided
@@ -329,9 +329,6 @@ struct server_task {
         }
 
         // process "json_schema" and "grammar"
-        if (data.contains("json_schema") && !data.at("json_schema").is_null() && data.contains("grammar") && !data.at("grammar").is_null()) {
-            throw std::runtime_error("Either \"json_schema\" or \"grammar\" can be specified, but not both");
-        }
         if (data.contains("json_schema") && !data.contains("grammar")) {
             try {
                 auto schema                  = json_value(data, "json_schema", json::object());
@@ -359,24 +356,6 @@ struct server_task {
         }
 
         {
-            const auto grammar_triggers = data.find("grammar_triggers");
-            if (grammar_triggers != data.end()) {
-                for (const auto & t : *grammar_triggers) {
-                    common_grammar_trigger trigger;
-                    trigger.word = t.at("word");
-                    trigger.at_start = t.at("at_start");
-
-                    auto ids = common_tokenize(vocab, trigger.word, /* add_special= */ false, /* parse_special= */ true);
-                    if (ids.size() == 1) {
-                        SRV_DBG("Grammar trigger token: %d (`%s`)\n", ids[0], trigger.word.c_str());
-                        params.sampling.grammar_trigger_tokens.push_back(ids[0]);
-                        params.sampling.preserved_tokens.insert(ids[0]);
-                        continue;
-                    }
-                    SRV_DBG("Grammar trigger word: `%s`\n", trigger.word.c_str());
-                    params.sampling.grammar_trigger_words.push_back(trigger);
-                }
-            }
             const auto preserved_tokens = data.find("preserved_tokens");
             if (preserved_tokens != data.end()) {
                 for (const auto & t : *preserved_tokens) {
@@ -386,12 +365,38 @@ struct server_task {
                         params.sampling.preserved_tokens.insert(ids[0]);
                     } else {
                         // This may happen when using a tool call style meant for a model with special tokens to preserve on a model without said tokens.
-                        SRV_WRN("Not preserved because more than 1 token (wrong chat template override?): %s\n", t.get<std::string>().c_str());
+                        SRV_DBG("Not preserved because more than 1 token: %s\n", t.get<std::string>().c_str());
                     }
                 }
             }
-            if (params.sampling.grammar_lazy) {
-                GGML_ASSERT(params.sampling.grammar_trigger_tokens.size() > 0 || params.sampling.grammar_trigger_words.size() > 0);
+            const auto grammar_triggers = data.find("grammar_triggers");
+            if (grammar_triggers != data.end()) {
+                for (const auto & t : *grammar_triggers) {
+                    auto ct = common_grammar_trigger::from_json(t);
+                    if (ct.type == COMMON_GRAMMAR_TRIGGER_TYPE_WORD) {
+                        const auto & word = ct.value;
+                        auto ids = common_tokenize(vocab, word, /* add_special= */ false, /* parse_special= */ true);
+                        if (ids.size() == 1) {
+                            auto token = ids[0];
+                            if (std::find(params.sampling.preserved_tokens.begin(), params.sampling.preserved_tokens.end(), (llama_token) token) == params.sampling.preserved_tokens.end()) {
+                                throw std::runtime_error("Grammar trigger word should be marked as preserved token: " + word);
+                            }
+                            SRV_DBG("Grammar trigger token: %d (`%s`)\n", token, word.c_str());
+                            common_grammar_trigger trigger;
+                            trigger.type = COMMON_GRAMMAR_TRIGGER_TYPE_TOKEN;
+                            trigger.value = (llama_token) token;
+                            params.sampling.grammar_triggers.push_back(trigger);
+                        } else {
+                            SRV_DBG("Grammar trigger word: `%s`\n", word.c_str());
+                            params.sampling.grammar_triggers.push_back({COMMON_GRAMMAR_TRIGGER_TYPE_WORD, word});
+                        }
+                    } else {
+                        params.sampling.grammar_triggers.push_back(ct);
+                    }
+                }
+            }
+            if (params.sampling.grammar_lazy && params.sampling.grammar_triggers.empty()) {
+                throw std::runtime_error("Error: no triggers set for lazy grammar!");
             }
         }
 
@@ -1807,7 +1812,7 @@ struct server_context {
     // Necessary similarity of prompt for slot selection
     float slot_prompt_similarity = 0.0f;
 
-    common_chat_templates chat_templates;
+    common_chat_templates_ptr chat_templates;
 
     ~server_context() {
         // Clear any sampling context
@@ -1891,43 +1896,16 @@ struct server_context {
             llama_init_dft.context.reset();
         }
 
-        if (params_base.chat_template.empty() && !validate_builtin_chat_template(params.use_jinja)) {
+        chat_templates = common_chat_templates_init(model, params_base.chat_template);
+        try {
+            common_chat_format_example(chat_templates.get(), params.use_jinja);
+        } catch (const std::exception & e) {
+            SRV_WRN("%s: Chat template parsing error: %s\n", __func__, e.what());
             SRV_WRN("%s: The chat template that comes with this model is not yet supported, falling back to chatml. This may cause the model to output suboptimal responses\n", __func__);
-            chat_templates = common_chat_templates_from_model(model, "chatml");
-        } else {
-            chat_templates = common_chat_templates_from_model(model, params_base.chat_template);
+            chat_templates = common_chat_templates_init(model, "chatml");
         }
-        GGML_ASSERT(chat_templates.template_default.get() != nullptr);
 
         return true;
-    }
-
-    bool validate_builtin_chat_template(bool use_jinja) const {
-        llama_chat_message chat[] = {{"user", "test"}};
-
-        if (use_jinja) {
-            auto templates = common_chat_templates_from_model(model, "");
-            common_chat_inputs inputs;
-            inputs.messages = json::array({{
-                {"role", "user"},
-                {"content", "test"},
-            }});
-            GGML_ASSERT(templates.template_default);
-            try {
-                common_chat_params_init(*templates.template_default, inputs);
-                if (templates.template_tool_use) {
-                    common_chat_params_init(*templates.template_tool_use, inputs);
-                }
-                return true;
-            } catch (const std::exception & e) {
-                SRV_ERR("failed to apply template: %s\n", e.what());
-                return false;
-            }
-        } else {
-            const char * tmpl = llama_model_chat_template(model, /* name */ nullptr);
-            const int32_t chat_res = llama_chat_apply_template(tmpl, chat, 1, true, nullptr, 0);
-            return chat_res > 0;
-        }
     }
 
     void init() {
@@ -2076,7 +2054,7 @@ struct server_context {
 
         if (slot.n_predict > 0 && slot.params.n_predict > slot.n_predict) {
             // Might be better to reject the request with a 400 ?
-            SLT_WRN(slot, "n_predict = %d exceeds server configuration, setting to %d", slot.params.n_predict, slot.n_predict);
+            SLT_WRN(slot, "n_predict = %d exceeds server configuration, setting to %d\n", slot.params.n_predict, slot.n_predict);
             slot.params.n_predict = slot.n_predict;
         }
 
@@ -3034,7 +3012,7 @@ struct server_context {
                                             const int64_t kv_shift = (int64_t) head_p - (int64_t) head_c;
 
                                             llama_kv_cache_seq_rm (ctx, slot.id, head_p, head_c);
-                                            llama_kv_cache_seq_add(ctx, slot.id, head_c, -1,     kv_shift);
+                                            llama_kv_cache_seq_add(ctx, slot.id, head_c, head_c + n_match, kv_shift);
 
                                             for (size_t i = 0; i < n_match; i++) {
                                                 slot.cache_tokens[head_p + i] = slot.cache_tokens[head_c + i];
@@ -3656,7 +3634,7 @@ int main(int argc, char ** argv) {
             }, {
                     {"name",  "n_busy_slots_per_decode"},
                     {"help",  "Average number of busy slots per llama_decode() call"},
-                    {"value",  (float) res_metrics->n_busy_slots_total / (float) res_metrics->n_decode_total}
+                    {"value",  (float) res_metrics->n_busy_slots_total / std::max((float) res_metrics->n_decode_total, 1.f)}
             }}},
             {"gauge", {{
                     {"name",  "prompt_tokens_seconds"},
@@ -3822,13 +3800,15 @@ int main(int argc, char ** argv) {
             { "default_generation_settings", ctx_server.default_generation_settings_for_props },
             { "total_slots",                 ctx_server.params_base.n_parallel },
             { "model_path",                  ctx_server.params_base.model },
-            { "chat_template",               ctx_server.chat_templates.template_default->source() },
-            { "bos_token",                   ctx_server.chat_templates.template_default->bos_token() },
-            { "eos_token",                   ctx_server.chat_templates.template_default->eos_token() },
+            { "chat_template",               common_chat_templates_source(ctx_server.chat_templates.get()) },
+            { "bos_token",                   common_token_to_piece(ctx_server.ctx, llama_vocab_bos(ctx_server.vocab), /* special= */ true)},
+            { "eos_token",                   common_token_to_piece(ctx_server.ctx, llama_vocab_eos(ctx_server.vocab), /* special= */ true)},
             { "build_info",                  build_info },
         };
-        if (ctx_server.params_base.use_jinja && ctx_server.chat_templates.template_tool_use) {
-            data["chat_template_tool_use"] = ctx_server.chat_templates.template_tool_use->source();
+        if (ctx_server.params_base.use_jinja) {
+            if (auto tool_use_src = common_chat_templates_source(ctx_server.chat_templates.get(), "tool_use")) {
+                data["chat_template_tool_use"] = tool_use_src;
+            }
         }
 
         res_ok(res, data);
@@ -4063,7 +4043,7 @@ int main(int argc, char ** argv) {
         }
 
         auto body = json::parse(req.body);
-        json data = oaicompat_completion_params_parse(body, params.use_jinja, params.reasoning_format, ctx_server.chat_templates);
+        json data = oaicompat_completion_params_parse(body, params.use_jinja, params.reasoning_format, ctx_server.chat_templates.get());
 
         return handle_completions_impl(
             SERVER_TASK_TYPE_COMPLETION,
@@ -4076,7 +4056,7 @@ int main(int argc, char ** argv) {
     // same with handle_chat_completions, but without inference part
     const auto handle_apply_template = [&ctx_server, &params, &res_ok](const httplib::Request & req, httplib::Response & res) {
         auto body = json::parse(req.body);
-        json data = oaicompat_completion_params_parse(body, params.use_jinja, params.reasoning_format, ctx_server.chat_templates);
+        json data = oaicompat_completion_params_parse(body, params.use_jinja, params.reasoning_format, ctx_server.chat_templates.get());
         res_ok(res, {{ "prompt", std::move(data.at("prompt")) }});
     };
 
@@ -4263,6 +4243,11 @@ int main(int argc, char ** argv) {
         //    return;
         //}
 
+        // if true, use TEI API format, otherwise use Jina API format
+        // Jina: https://jina.ai/reranker/
+        // TEI: https://huggingface.github.io/text-embeddings-inference/#/Text%20Embeddings%20Inference/rerank
+        bool is_tei_format = body.contains("texts");
+
         json query;
         if (body.count("query") == 1) {
             query = body.at("query");
@@ -4275,7 +4260,8 @@ int main(int argc, char ** argv) {
             return;
         }
 
-        std::vector<std::string> documents = json_value(body, "documents", std::vector<std::string>());
+        std::vector<std::string> documents = json_value(body, "documents",
+                                             json_value(body, "texts", std::vector<std::string>()));
         if (documents.empty()) {
             res_error(res, format_error_response("\"documents\" must be a non-empty string array", ERROR_TYPE_INVALID_REQUEST));
             return;
@@ -4320,7 +4306,12 @@ int main(int argc, char ** argv) {
         }
 
         // write JSON response
-        json root = format_response_rerank(body, responses);
+        json root = format_response_rerank(
+            body,
+            responses,
+            is_tei_format,
+            documents);
+
         res_ok(res, root);
     };
 
@@ -4482,8 +4473,8 @@ int main(int argc, char ** argv) {
 
     // print sample chat example to make it clear which template is used
     LOG_INF("%s: chat template, chat_template: %s, example_format: '%s'\n", __func__,
-        ctx_server.chat_templates.template_default->source().c_str(),
-        common_chat_format_example(*ctx_server.chat_templates.template_default, ctx_server.params_base.use_jinja).c_str());
+        common_chat_templates_source(ctx_server.chat_templates.get()),
+        common_chat_format_example(ctx_server.chat_templates.get(), ctx_server.params_base.use_jinja).c_str());
 
     ctx_server.queue_tasks.on_new_task([&ctx_server](const server_task & task) {
         ctx_server.process_single_task(task);
