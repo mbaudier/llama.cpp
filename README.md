@@ -112,6 +112,8 @@ Instructions for adding support for new models: [HOWTO-add-model.md](docs/develo
 - [x] [RWKV-6](https://github.com/BlinkDL/RWKV-LM)
 - [x] [QRWKV-6](https://huggingface.co/recursal/QRWKV6-32B-Instruct-Preview-v0.1)
 - [x] [GigaChat-20B-A3B](https://huggingface.co/ai-sage/GigaChat-20B-A3B-instruct)
+- [X] [Trillion-7B-preview](https://huggingface.co/trillionlabs/Trillion-7B-preview)
+- [x] [Ling models](https://huggingface.co/collections/inclusionAI/ling-67c51c85b34a7ea0aba94c32)
 
 #### Multimodal
 
@@ -172,6 +174,7 @@ Instructions for adding support for new models: [HOWTO-add-model.md](docs/develo
 - [eva](https://github.com/ylsdamxssjxxdd/eva) (MIT)
 - [iohub/collama](https://github.com/iohub/coLLaMA) (Apache-2.0)
 - [janhq/jan](https://github.com/janhq/jan) (AGPL)
+- [johnbean393/Sidekick](https://github.com/johnbean393/Sidekick) (MIT)
 - [KanTV](https://github.com/zhouwg/kantv?tab=readme-ov-file) (Apache-2.0)
 - [KodiBot](https://github.com/firatkiral/kodibot) (GPL)
 - [llama.vim](https://github.com/ggml-org/llama.vim) (MIT)
