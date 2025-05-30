@@ -1,3 +1,7 @@
+# Ignore multimodal until the mtmd approach seem stable enough
+/usr/lib/*/libllava_shared.so
+/usr/lib/*/libmtmd_shared.so
+
 # Most executables produced are not stable enough to be distributed
 /usr/bin/llama-*
 /usr/libexec/*/ggml/llama-*
