@@ -39,13 +39,23 @@ override_dh_auto_configure:
 override_dh_auto_install:
 	dh_auto_install
 	
+	# Generate bash completion file
+	LD_LIBRARY_PATH=$(install_lib_multiarch) \
+		$(install_bin)/llama-cli --device none --completion-bash \
+		> llama-tools-completion
+	sed -i '/complete -F _llama_completions .*/d' llama-tools-completion
+
 	# Move executables to libexec, so that they can load the GGML backends
 	# and link them to bin
 	mkdir -p $(install_libexec_multiarch)/ggml
+	mkdir -p completions
 	for file in $(install_bin)/llama-*; do \
     	mv $$file $(install_libexec_multiarch)/ggml/$$(basename "$$file"); \
 		ln -s --relative -t $(install_bin) $(install_libexec_multiarch)/ggml/$$(basename "$$file"); \
+		cp llama-tools-completion completions/$$(basename "$$file"); \
+		echo "complete -F _llama_completions $$(basename "$$file")" >> completions/$$(basename "$$file"); \
 	done
+	
 
 override_dh_auto_test:
 	# tests which depends on remote location are failing

@@ -1,0 +1,3 @@
+completions/llama-cli
+# completions/llama-quantize does not actually use these options
+completions/llama-bench
