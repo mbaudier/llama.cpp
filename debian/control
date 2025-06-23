@@ -26,11 +26,23 @@ Description: Inference of large language models in pure C/C++ (shared library)
  llama.cpp leverages the ggml tensor library in order to run
  large language models (LLMs) provided in the GGUF file format.
 
+Package: libmtmd0
+Section: libs
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends},
+ libllama0
+# Explicitly conflict with Debian official
+Conflicts: llama.cpp
+Description: Inference of large language models in pure C/C++ (multimodal library)
+ mtmd provides multimodl inference.
+
 # We only distribute a few very useful tools, with stable CLI options
 Package: llama-cpp-tools
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends},
- libllama0, ggml, curl
+ libllama0 (= ${binary:Version}), libmtmd0 (= ${binary:Version}), ggml, curl
 Description: Inference of large language models in pure C/C++ (tools)
  llama-cli: versatile tool wrapping most features provided by libllama.
  It typically allows one to run one-shot prompts or to "chat"
@@ -42,6 +54,8 @@ Description: Inference of large language models in pure C/C++ (tools)
  .
  llama-bench: benchmarking of large language models or
  ggml backends.
+ .
+ llama-mtmd-cli: multimodal support.
 
 Package: libllama0-dev
 Section: libdevel
@@ -51,3 +65,13 @@ Depends: ${misc:Depends},
 Description: Inference of large language models in pure C/C++ (development files)
  Development files required for building software based on the
  stable and documented llama.cpp API.
+
+Package: libmtmd0-dev
+Section: libdevel
+Architecture: any
+Depends: ${misc:Depends},
+ ggml-dev, libllama0-dev (= ${binary:Version}), libmtmd0 (= ${binary:Version})
+Description: Inference of large language models in pure C/C++ (development files)
+ Development files required for building software based on the
+ stable and documented llama.cpp API.
+ 

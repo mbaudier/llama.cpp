@@ -3,9 +3,10 @@ Date: Sun, 23 Feb 2025 11:31:46 +0100
 Subject: improve-cmake-build
 
 ---
- CMakeLists.txt     | 2 +-
- src/CMakeLists.txt | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ CMakeLists.txt            | 2 +-
+ src/CMakeLists.txt        | 4 ++++
+ tools/mtmd/CMakeLists.txt | 4 ++++
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 50801cd..d2becb0 100644
@@ -33,3 +34,18 @@ index 8f9cd65..9aa905a 100644
 +    	set_target_properties(llama PROPERTIES VERSION ${LLAMA_INSTALL_VERSION} SOVERSION 0)
 +    endif()
  endif()
+diff --git a/tools/mtmd/CMakeLists.txt b/tools/mtmd/CMakeLists.txt
+index 4baa15b..c330f06 100644
+--- a/tools/mtmd/CMakeLists.txt
++++ b/tools/mtmd/CMakeLists.txt
+@@ -35,6 +35,10 @@ set_target_properties(mtmd
+     PROPERTIES
+     PUBLIC_HEADER "${MTMD_PUBLIC_HEADERS}")
+ 
++if(DEFINED LLAMA_INSTALL_VERSION)
++    message(STATUS "Set mtmd shared library version to ${LLAMA_INSTALL_VERSION}")
++	set_target_properties(mtmd PROPERTIES VERSION ${LLAMA_INSTALL_VERSION} SOVERSION 0)
++endif()
+ install(TARGETS mtmd LIBRARY PUBLIC_HEADER)
+ 
+ if (NOT MSVC)
