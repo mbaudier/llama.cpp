@@ -20,6 +20,8 @@ Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends},
  libggml0
+# Explicitly conflict with Debian official
+Conflicts: llama.cpp
 Description: Inference of large language models in pure C/C++ (shared library)
  llama.cpp leverages the ggml tensor library in order to run
  large language models (LLMs) provided in the GGUF file format.
