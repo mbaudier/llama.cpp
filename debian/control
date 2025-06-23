@@ -49,13 +49,3 @@ Depends: ${misc:Depends},
 Description: Inference of large language models in pure C/C++ (development files)
  Development files required for building software based on the
  stable and documented llama.cpp API.
-
-Package: llama-cpp-dev
-Section: libdevel
-Architecture: any
-Depends: ${misc:Depends},
- libllama0-dev (= ${binary:Version}), libcurl4-openssl-dev, libssl-dev
-Description: Inference of large language models in pure C/C++ (common static library)
- Development files and static library providing a framework command to the
- various examples. It allows one to quickly to develop a command line utility
- but is expected to provide a less stable API than libllama-dev.

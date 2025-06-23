@@ -2,8 +2,10 @@
 # See debhelper(7) (uncomment to enable)
 #export DH_VERBOSE = 1
 
-# multiarch
+# For multiarch
 include /usr/share/dpkg/architecture.mk
+# For DEB_VERSION_UPSTREAM
+include /usr/share/dpkg/pkg-info.mk
 
 build_multiarch=build/$(DEB_HOST_MULTIARCH)
 install_bin=debian/tmp/usr/bin
@@ -21,20 +23,21 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 # Use build/ for output, so that it is in the .gitignore of upstream
 	dh $@ --buildsystem=cmake --builddirectory=$(build_multiarch)
 
-# Note: we disable LLAMA_ALL_WARNINGS so that ggml_get_flags() CMake function do not get called
-# as it is available deep in GGML build scripts and reset the compiler/linker flags
 override_dh_auto_configure:
 	dh_auto_configure -- \
+	-DBUILD_NUMBER=$(subst 0.0.,,$(DEB_VERSION_UPSTREAM)) \
 	-DCMAKE_LIBRARY_ARCHITECTURE="$(DEB_HOST_MULTIARCH)" \
-	-DCMAKE_BUILD_TYPE=Release \
-	-DCMAKE_PROJECT_llama.cpp_INCLUDE=debian/cmake/debian-llama-cpp.cmake \
+	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+	\
 	-DBUILD_SHARED_LIBS=ON \
-	-DGGML_BACKEND_DL=ON \
-	-DLLAMA_ALL_WARNINGS=OFF \
+	-DLLAMA_USE_SYSTEM_GGML=ON \
+	-DCMAKE_LIBRARY_PATH=/usr/libexec/$(DEB_HOST_MULTIARCH)/ggml \
+	\
+	-DLLAMA_CURL=ON \
+	-DLLAMA_BUILD_TOOLS=ON \
+	-DLLAMA_BUILD_EXAMPLES=OFF \
 	-DLLAMA_BUILD_TESTS=OFF \
 	-DLLAMA_BUILD_SERVER=OFF \
-	-DLLAMA_CURL=ON \
-	-DLLAMA_SERVER_SSL=OFF \
 
 override_dh_auto_install:
 	dh_auto_install
@@ -45,8 +48,8 @@ override_dh_auto_install:
 		> llama-tools-completion
 	sed -i '/complete -F _llama_completions .*/d' llama-tools-completion
 
-	# Move executables to libexec, so that they can load the GGML backends
-	# and link them to bin
+	# Move executables to ggml's libexec, so that they can load the GGML backends
+	# and link them in usr/bin
 	mkdir -p $(install_libexec_multiarch)/ggml
 	mkdir -p completions
 	for file in $(install_bin)/llama-*; do \
