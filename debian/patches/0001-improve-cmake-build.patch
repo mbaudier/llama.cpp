@@ -22,7 +22,7 @@ index 50801cd..d2becb0 100644
  # override ggml options
  set(GGML_ALL_WARNINGS   ${LLAMA_ALL_WARNINGS})
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 8f9cd65..9aa905a 100644
+index 8f9cd65..4a54aca 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -47,4 +47,8 @@ if (BUILD_SHARED_LIBS)
@@ -31,11 +31,11 @@ index 8f9cd65..9aa905a 100644
      target_compile_definitions(llama PUBLIC  LLAMA_SHARED)
 +	if(DEFINED LLAMA_INSTALL_VERSION)
 +        message(STATUS "Set llama shared library version to ${LLAMA_INSTALL_VERSION}")
-+    	set_target_properties(llama PROPERTIES VERSION ${LLAMA_INSTALL_VERSION} SOVERSION 0)
++        set_target_properties(llama PROPERTIES VERSION ${LLAMA_INSTALL_VERSION} SOVERSION 0)
 +    endif()
  endif()
 diff --git a/tools/mtmd/CMakeLists.txt b/tools/mtmd/CMakeLists.txt
-index 4baa15b..c330f06 100644
+index 4baa15b..f267dc9 100644
 --- a/tools/mtmd/CMakeLists.txt
 +++ b/tools/mtmd/CMakeLists.txt
 @@ -35,6 +35,10 @@ set_target_properties(mtmd
@@ -44,7 +44,7 @@ index 4baa15b..c330f06 100644
  
 +if(DEFINED LLAMA_INSTALL_VERSION)
 +    message(STATUS "Set mtmd shared library version to ${LLAMA_INSTALL_VERSION}")
-+	set_target_properties(mtmd PROPERTIES VERSION ${LLAMA_INSTALL_VERSION} SOVERSION 0)
++    set_target_properties(mtmd PROPERTIES VERSION ${LLAMA_INSTALL_VERSION} SOVERSION 0)
 +endif()
  install(TARGETS mtmd LIBRARY PUBLIC_HEADER)
  
