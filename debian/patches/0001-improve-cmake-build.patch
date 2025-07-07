@@ -3,24 +3,10 @@ Date: Sun, 23 Feb 2025 11:31:46 +0100
 Subject: improve-cmake-build
 
 ---
- CMakeLists.txt            | 2 +-
  src/CMakeLists.txt        | 4 ++++
  tools/mtmd/CMakeLists.txt | 4 ++++
- 3 files changed, 9 insertions(+), 1 deletion(-)
+ 2 files changed, 8 insertions(+)
 
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 50801cd..d2becb0 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -95,7 +95,7 @@ endif()
- if (NOT DEFINED LLAMA_BUILD_COMMIT)
-     set(LLAMA_BUILD_COMMIT        ${BUILD_COMMIT})
- endif()
--set(LLAMA_INSTALL_VERSION 0.0.${BUILD_NUMBER})
-+set(LLAMA_INSTALL_VERSION 0.0.${LLAMA_BUILD_NUMBER})
- 
- # override ggml options
- set(GGML_ALL_WARNINGS   ${LLAMA_ALL_WARNINGS})
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
 index 8f9cd65..4a54aca 100644
 --- a/src/CMakeLists.txt

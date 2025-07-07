@@ -1,5 +1,5 @@
-llama-cpp (0.0.5713-1) unstable; urgency=medium
+llama-cpp (0.0.5760-1) unstable; urgency=medium
 
   * Update upstream
 
- -- Mathieu Baudier <mbaudier@argeo.org>  Mon, 23 Jun 2025 10:23:17 +0000
+ -- Mathieu Baudier <mbaudier@argeo.org>  Mon, 07 Jul 2025 07:16:11 +0000
