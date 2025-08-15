@@ -10,7 +10,7 @@ Build-Depends: dh-sequence-bash-completion,
                cmake,
                debhelper-compat (= 13),
                libcurl4-openssl-dev,
-               ggml-dev,
+               libggml-dev,
                pkgconf,
 Rules-Requires-Root: no
 
@@ -20,6 +20,7 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: libggml0,
+         libggml-backend-cpu,
          ${misc:Depends},
          ${shlibs:Depends},
 # Explicitly conflict with Debian official
@@ -45,7 +46,6 @@ Description: Inference of large language models in pure C/C++ (multimodal librar
 Package: llama-cpp-tools
 Architecture: any
 Depends: libllama0 (= ${binary:Version}),
-         ggml,
          curl,
          ${misc:Depends},
          ${shlibs:Depends},
@@ -64,30 +64,29 @@ Description: Inference of large language models in pure C/C++ (tools)
 Package: llama-cpp-tools-multimodal
 Architecture: any
 Depends: libmtmd0 (= ${binary:Version}),
-         ggml,
          curl,
          ${misc:Depends},
          ${shlibs:Depends},
 Description: Inference of large language models in pure C/C++ (multimodal tools)
  llama-mtmd-cli: multimodal support.
 
-Package: libllama0-dev
+Package: libllama-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends: libllama0 (= ${binary:Version}),
-         ggml-dev,
+         libggml-dev,
          ${misc:Depends},
 Description: Inference of large language models in pure C/C++ (development files)
  Development files required for building software based on the
  stable and documented llama.cpp API.
 
-Package: libmtmd0-dev
+Package: libmtmd-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends: libmtmd0 (= ${binary:Version}),
-         libllama0-dev (= ${binary:Version}),
+         libllama-dev (= ${binary:Version}),
          ${misc:Depends},
 Description: Inference of large language models in pure C/C++ (multimodal development files)
  Development files required for building software based on the
