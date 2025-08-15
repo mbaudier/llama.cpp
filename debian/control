@@ -2,24 +2,26 @@ Source: llama-cpp
 Section: science
 Priority: optional
 Maintainer: Mathieu Baudier <mbaudier@argeo.org>
-Build-Depends: debhelper-compat (= 13), pkgconf,
-	cmake-data, cmake,
-	ggml-dev,
-	libcurl4-openssl-dev,
-	bash-completion, dh-sequence-bash-completion,
-Standards-Version: 4.7.0
-Vcs-Git: https://git.djapps.eu/pkg/ggml/sources/llama.cpp
+Standards-Version: 4.7.2
 Vcs-Browser: https://git.djapps.eu/?p=pkg/ggml/sources/llama.cpp;a=summary
-Homepage: https://github.com/ggml-org/llama.cpp
-Rules-Requires-Root: binary-targets
+Vcs-Git: https://git.djapps.eu/pkg/ggml/sources/llama.cpp
+Homepage: https://github.com/ggml-org/llama.cpp/
+Build-Depends: dh-sequence-bash-completion,
+               cmake,
+               debhelper-compat (= 13),
+               libcurl4-openssl-dev,
+               ggml-dev,
+               pkgconf,
+Rules-Requires-Root: no
 
 Package: libllama0
 Section: libs
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${misc:Depends}, ${shlibs:Depends},
- libggml0
+Depends: libggml0,
+         ${misc:Depends},
+         ${shlibs:Depends},
 # Explicitly conflict with Debian official
 Conflicts: llama.cpp
 Description: Inference of large language models in pure C/C++ (shared library)
@@ -31,18 +33,23 @@ Section: libs
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${misc:Depends}, ${shlibs:Depends},
- libllama0
+Depends: libllama0,
+         ${misc:Depends},
+         ${shlibs:Depends},
 # Explicitly conflict with Debian official
 Conflicts: llama.cpp
 Description: Inference of large language models in pure C/C++ (multimodal library)
- mtmd provides multimodl inference.
+ mtmd provides multimodal inference.
 
 # We only distribute a few very useful tools, with stable CLI options
 Package: llama-cpp-tools
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends},
- libllama0 (= ${binary:Version}), libmtmd0 (= ${binary:Version}), ggml, curl
+Depends: libllama0 (= ${binary:Version}),
+         libmtmd0 (= ${binary:Version}),
+         ggml,
+         curl,
+         ${misc:Depends},
+         ${shlibs:Depends},
 Description: Inference of large language models in pure C/C++ (tools)
  llama-cli: versatile tool wrapping most features provided by libllama.
  It typically allows one to run one-shot prompts or to "chat"
@@ -60,8 +67,10 @@ Description: Inference of large language models in pure C/C++ (tools)
 Package: libllama0-dev
 Section: libdevel
 Architecture: any
-Depends: ${misc:Depends},
- ggml-dev, libllama0 (= ${binary:Version})
+Multi-Arch: same
+Depends: libllama0 (= ${binary:Version}),
+         ggml-dev,
+         ${misc:Depends},
 Description: Inference of large language models in pure C/C++ (development files)
  Development files required for building software based on the
  stable and documented llama.cpp API.
@@ -69,9 +78,11 @@ Description: Inference of large language models in pure C/C++ (development files
 Package: libmtmd0-dev
 Section: libdevel
 Architecture: any
-Depends: ${misc:Depends},
- ggml-dev, libllama0-dev (= ${binary:Version}), libmtmd0 (= ${binary:Version})
-Description: Inference of large language models in pure C/C++ (development files)
+Multi-Arch: same
+Depends: libmtmd0 (= ${binary:Version}),
+         libllama0-dev (= ${binary:Version}),
+         ${misc:Depends},
+Description: Inference of large language models in pure C/C++ (multimodal development files)
  Development files required for building software based on the
- stable and documented llama.cpp API.
+ multimodal llama.cpp API.
  

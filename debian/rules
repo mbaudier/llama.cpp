@@ -1,65 +1,52 @@
 #!/usr/bin/make -f
-# See debhelper(7) (uncomment to enable)
 #export DH_VERBOSE = 1
 
-# For multiarch
-include /usr/share/dpkg/architecture.mk
-# For DEB_VERSION_UPSTREAM
-include /usr/share/dpkg/pkg-info.mk
-
-build_multiarch=build/$(DEB_HOST_MULTIARCH)
-install_bin=debian/tmp/usr/bin
-install_lib=debian/tmp/usr/lib
-install_lib_multiarch=debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)
-install_libexec_multiarch=debian/tmp/usr/libexec/$(DEB_HOST_MULTIARCH)
-
-# parallelism
-DEB_BUILD_OPTIONS ?= parallel=8
-
-# hardening
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
-%:
-# Use build/ for output, so that it is in the .gitignore of upstream
-	dh $@ --buildsystem=cmake --builddirectory=$(build_multiarch)
+# FOR DEB_VERSION_UPSTREAM
+include /usr/share/dpkg/pkg-info.mk
 
-override_dh_auto_configure:
-	dh_auto_configure -- \
-	-DLLAMA_BUILD_NUMBER=$(subst 0.0.,,$(DEB_VERSION_UPSTREAM)) \
-	-DCMAKE_LIBRARY_ARCHITECTURE="$(DEB_HOST_MULTIARCH)" \
+CMAKE_FLAGS = \
 	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-	\
-	-DBUILD_SHARED_LIBS=ON \
+	-DLLAMA_BUILD_NUMBER=$(subst 0.0.,,$(DEB_VERSION_UPSTREAM)) \
+	-DLLAMA_BUILD_COMMIT=Argeo \
 	-DLLAMA_USE_SYSTEM_GGML=ON \
+	\
 	-DCMAKE_LIBRARY_PATH=/usr/libexec/$(DEB_HOST_MULTIARCH)/ggml \
 	\
 	-DLLAMA_CURL=ON \
 	-DLLAMA_BUILD_TOOLS=ON \
 	-DLLAMA_BUILD_EXAMPLES=OFF \
 	-DLLAMA_BUILD_TESTS=OFF \
-	-DLLAMA_BUILD_SERVER=OFF \
+	-DLLAMA_BUILD_SERVER=OFF
 
-override_dh_auto_install:
-	dh_auto_install
-	
-	# Generate bash completion file
-	LD_LIBRARY_PATH=$(install_lib_multiarch) \
-		$(install_bin)/llama-cli --device none --completion-bash \
-		> llama-tools-completion
-	sed -i '/complete -F _llama_completions .*/d' llama-tools-completion
+# Use build/ for output, so that it is in the .gitignore of upstream
+%:
+	dh $@ --buildsystem=cmake \
+	 --builddirectory=build/$(DEB_HOST_MULTIARCH)
 
-	# Move executables to ggml's libexec, so that they can load the GGML backends
-	# and link them in usr/bin
-	mkdir -p $(install_libexec_multiarch)/ggml
+override_dh_auto_configure-arch:
+	dh_auto_configure -- $(CMAKE_FLAGS)
+
+execute_after_dh_auto_install-arch:
+	# Bash completion file
 	mkdir -p completions
-	for file in $(install_bin)/llama-*; do \
-    	mv $$file $(install_libexec_multiarch)/ggml/$$(basename "$$file"); \
-		ln -s --relative -t $(install_bin) $(install_libexec_multiarch)/ggml/$$(basename "$$file"); \
-		cp llama-tools-completion completions/$$(basename "$$file"); \
-		echo "complete -F _llama_completions $$(basename "$$file")" >> completions/$$(basename "$$file"); \
-	done
-	
+	LD_LIBRARY_PATH=debian/tmp/usr/lib/${DEB_HOST_MULTIARCH} \
+		debian/tmp/usr/bin/llama-cli --device none --completion-bash \
+		> completions/llama-cli
 
+# Move executables to ggml's libexec, so that they can load the GGML backends
+# and link them in usr/bin
+	mkdir -p debian/tmp/usr/libexec/x86_64-linux-gnu/ggml
+	for progname in debian/tmp/usr/bin/llama-*; do \
+		progname_base=$$(basename $$progname); \
+    	mv $$progname debian/tmp/usr/libexec/$(DEB_HOST_MULTIARCH)/ggml/; \
+		ln -s --relative -t debian/tmp/usr/bin \
+		 debian/tmp/usr/libexec/$(DEB_HOST_MULTIARCH)/ggml/$$progname_base; \
+		[ "$$progname_base" != "llama-cli" ] || continue ; \
+		ln -r -s completions/llama-cli completions/$$progname_base; \
+	done
+
+# No tests for now, as many need some kind of model we don't have
 override_dh_auto_test:
-	# tests which depends on remote location are failing
-	dh_auto_test || true
+	:
