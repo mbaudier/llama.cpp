@@ -41,11 +41,10 @@ Conflicts: llama.cpp
 Description: Inference of large language models in pure C/C++ (multimodal library)
  mtmd provides multimodal inference.
 
-# We only distribute a few very useful tools, with stable CLI options
+# We only distribute a few useful tools, with stable CLI options
 Package: llama-cpp-tools
 Architecture: any
 Depends: libllama0 (= ${binary:Version}),
-         libmtmd0 (= ${binary:Version}),
          ggml,
          curl,
          ${misc:Depends},
@@ -61,7 +60,15 @@ Description: Inference of large language models in pure C/C++ (tools)
  .
  llama-bench: benchmarking of large language models or
  ggml backends.
- .
+
+Package: llama-cpp-tools-multimodal
+Architecture: any
+Depends: libmtmd0 (= ${binary:Version}),
+         ggml,
+         curl,
+         ${misc:Depends},
+         ${shlibs:Depends},
+Description: Inference of large language models in pure C/C++ (multimodal tools)
  llama-mtmd-cli: multimodal support.
 
 Package: libllama0-dev
@@ -85,4 +92,3 @@ Depends: libmtmd0 (= ${binary:Version}),
 Description: Inference of large language models in pure C/C++ (multimodal development files)
  Development files required for building software based on the
  multimodal llama.cpp API.
- 

@@ -6,6 +6,3 @@
 
 /usr/bin/llama-bench
 /usr/libexec/*/ggml/llama-bench
-
-/usr/bin/llama-mtmd-cli
-/usr/libexec/*/ggml/llama-mtmd-cli
