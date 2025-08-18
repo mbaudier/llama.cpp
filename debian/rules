@@ -3,6 +3,8 @@
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
+# For multiarch
+include /usr/share/dpkg/architecture.mk
 # FOR DEB_VERSION_UPSTREAM
 include /usr/share/dpkg/pkg-info.mk
 
@@ -16,7 +18,7 @@ CMAKE_FLAGS = \
               -DLLAMA_BUILD_COMMIT=Argeo \
               -DLLAMA_USE_SYSTEM_GGML=ON \
               \
-              -DCMAKE_LIBRARY_PATH=/usr/libexec/$(DEB_HOST_MULTIARCH)/ggml \
+              -DCMAKE_LIBRARY_PATH=/usr/libexec/$(DEB_TARGET_MULTIARCH)/ggml \
               \
               -DLLAMA_CURL=ON \
               -DLLAMA_BUILD_TOOLS=ON \
@@ -27,7 +29,7 @@ CMAKE_FLAGS = \
 # Use build/ for output, so that it is in the .gitignore of upstream
 %:
 	dh $@ --buildsystem=cmake \
-	 --builddirectory=build/$(DEB_HOST_MULTIARCH)
+	 --builddirectory=build/$(DEB_TARGET_MULTIARCH)
 
 override_dh_auto_configure-arch:
 	dh_auto_configure -- $(CMAKE_FLAGS)
@@ -35,18 +37,18 @@ override_dh_auto_configure-arch:
 execute_after_dh_auto_install-arch:
 	# Bash completion file
 	mkdir -p completions
-	LD_LIBRARY_PATH=debian/tmp/usr/lib/${DEB_HOST_MULTIARCH} \
+	LD_LIBRARY_PATH=debian/tmp/usr/lib/$(DEB_TARGET_MULTIARCH) \
 		debian/tmp/usr/bin/llama-cli --device none --completion-bash \
 		> completions/llama-cli
 
 # Move executables to ggml's libexec, so that they can load the GGML backends
 # and link them in usr/bin
-	mkdir -p debian/tmp/usr/libexec/x86_64-linux-gnu/ggml
+	mkdir -p debian/tmp/usr/libexec/$(DEB_TARGET_MULTIARCH)/ggml
 	for progname in debian/tmp/usr/bin/llama-*; do \
 		progname_base=$$(basename $$progname); \
-    	mv $$progname debian/tmp/usr/libexec/$(DEB_HOST_MULTIARCH)/ggml/; \
+    	mv $$progname debian/tmp/usr/libexec/$(DEB_TARGET_MULTIARCH)/ggml/; \
 		ln -s --relative -t debian/tmp/usr/bin \
-		 debian/tmp/usr/libexec/$(DEB_HOST_MULTIARCH)/ggml/$$progname_base; \
+		 debian/tmp/usr/libexec/$(DEB_TARGET_MULTIARCH)/ggml/$$progname_base; \
 		[ "$$progname_base" != "llama-cli" ] || continue ; \
 		ln -r -s completions/llama-cli completions/$$progname_base; \
 	done
