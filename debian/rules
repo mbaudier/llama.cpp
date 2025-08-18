@@ -6,19 +6,23 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 # FOR DEB_VERSION_UPSTREAM
 include /usr/share/dpkg/pkg-info.mk
 
+FLAGS_ARGEO=-O3 -g -DNDEBUG
+
 CMAKE_FLAGS = \
-	-DCMAKE_BUILD_TYPE=RelWithDebInfo \
-	-DLLAMA_BUILD_NUMBER=$(subst 0.0.,,$(DEB_VERSION_UPSTREAM)) \
-	-DLLAMA_BUILD_COMMIT=Argeo \
-	-DLLAMA_USE_SYSTEM_GGML=ON \
-	\
-	-DCMAKE_LIBRARY_PATH=/usr/libexec/$(DEB_HOST_MULTIARCH)/ggml \
-	\
-	-DLLAMA_CURL=ON \
-	-DLLAMA_BUILD_TOOLS=ON \
-	-DLLAMA_BUILD_EXAMPLES=OFF \
-	-DLLAMA_BUILD_TESTS=OFF \
-	-DLLAMA_BUILD_SERVER=OFF
+              -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+              -DCMAKE_C_FLAGS_RELWITHDEBINFO="$(FLAGS_ARGEO)" \
+              -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="$(FLAGS_ARGEO)" \
+              -DLLAMA_BUILD_NUMBER=$(subst 0.0.,,$(DEB_VERSION_UPSTREAM)) \
+              -DLLAMA_BUILD_COMMIT=Argeo \
+              -DLLAMA_USE_SYSTEM_GGML=ON \
+              \
+              -DCMAKE_LIBRARY_PATH=/usr/libexec/$(DEB_HOST_MULTIARCH)/ggml \
+              \
+              -DLLAMA_CURL=ON \
+              -DLLAMA_BUILD_TOOLS=ON \
+              -DLLAMA_BUILD_EXAMPLES=OFF \
+              -DLLAMA_BUILD_TESTS=OFF \
+              -DLLAMA_BUILD_SERVER=OFF
 
 # Use build/ for output, so that it is in the .gitignore of upstream
 %:
