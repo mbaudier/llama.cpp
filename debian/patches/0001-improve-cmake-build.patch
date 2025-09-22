@@ -8,7 +8,7 @@ Subject: improve-cmake-build
  2 files changed, 8 insertions(+)
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 8f9cd65..4a54aca 100644
+index 18cfc76..a01de6a 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -47,4 +47,8 @@ if (BUILD_SHARED_LIBS)
@@ -21,7 +21,7 @@ index 8f9cd65..4a54aca 100644
 +    endif()
  endif()
 diff --git a/tools/mtmd/CMakeLists.txt b/tools/mtmd/CMakeLists.txt
-index 4baa15b..f267dc9 100644
+index 2381012..9ab925b 100644
 --- a/tools/mtmd/CMakeLists.txt
 +++ b/tools/mtmd/CMakeLists.txt
 @@ -35,6 +35,10 @@ set_target_properties(mtmd
