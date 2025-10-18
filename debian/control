@@ -1,4 +1,4 @@
-Source: llama-cpp
+Source: llama.cpp
 Section: science
 Priority: optional
 Maintainer: Mathieu Baudier <mbaudier@argeo.org>
@@ -43,7 +43,7 @@ Description: Inference of large language models in pure C/C++ (multimodal librar
  mtmd provides multimodal inference.
 
 # We only distribute a few useful tools, with stable CLI options
-Package: llama-cpp-tools
+Package: llama.cpp-tools
 Architecture: any
 Depends: libllama0 (= ${binary:Version}),
          curl,
@@ -61,7 +61,7 @@ Description: Inference of large language models in pure C/C++ (tools)
  llama-bench: benchmarking of large language models or
  ggml backends.
 
-Package: llama-cpp-tools-multimodal
+Package: llama.cpp-tools-multimodal
 Architecture: any
 Depends: libmtmd0 (= ${binary:Version}),
          curl,
