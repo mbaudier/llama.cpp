@@ -9,7 +9,7 @@
 	} from '$lib/stores/chat.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { serverStore } from '$lib/stores/server.svelte';
-	import { config } from '$lib/stores/settings.svelte';
+	import { config, settingsStore } from '$lib/stores/settings.svelte';
 	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
@@ -44,12 +44,12 @@
 			}
 		}
 
-		if (isCtrlOrCmd && event.shiftKey && event.key === 'o') {
+		if (isCtrlOrCmd && event.shiftKey && event.key === 'O') {
 			event.preventDefault();
 			goto('?new_chat=true#/');
 		}
 
-		if (event.shiftKey && isCtrlOrCmd && event.key === 'e') {
+		if (event.shiftKey && isCtrlOrCmd && event.key === 'E') {
 			event.preventDefault();
 
 			if (chatSidebar?.editActiveConversation) {
@@ -93,6 +93,15 @@
 	// Initialize server properties on app load
 	$effect(() => {
 		serverStore.fetchServerProps();
+	});
+
+	// Sync settings when server props are loaded
+	$effect(() => {
+		const serverProps = serverStore.serverProps;
+
+		if (serverProps?.default_generation_settings?.params) {
+			settingsStore.syncWithServerDefaults();
+		}
 	});
 
 	// Monitor API key changes and redirect to error page if removed or changed when required
@@ -156,10 +165,10 @@
 		</Sidebar.Root>
 
 		<Sidebar.Trigger
-			class="transition-left absolute h-8 w-8 duration-200 ease-linear {sidebarOpen
+			class="transition-left absolute left-0 z-[900] h-8 w-8 duration-200 ease-linear {sidebarOpen
 				? 'md:left-[var(--sidebar-width)]'
-				: 'left-0'}"
-			style="translate: 1rem 1rem; z-index: 99999;"
+				: ''}"
+			style="translate: 1rem 1rem;"
 		/>
 
 		<Sidebar.Inset class="flex flex-1 flex-col overflow-hidden">
