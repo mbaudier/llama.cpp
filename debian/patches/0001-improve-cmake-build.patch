@@ -8,10 +8,10 @@ Subject: improve-cmake-build
  2 files changed, 8 insertions(+)
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 18cfc76..a01de6a 100644
+index 630b2cd..0c225c5 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -47,4 +47,8 @@ if (BUILD_SHARED_LIBS)
+@@ -142,4 +142,8 @@ if (BUILD_SHARED_LIBS)
      set_target_properties(llama PROPERTIES POSITION_INDEPENDENT_CODE ON)
      target_compile_definitions(llama PRIVATE LLAMA_BUILD)
      target_compile_definitions(llama PUBLIC  LLAMA_SHARED)
