@@ -24,7 +24,7 @@ CMAKE_FLAGS = \
               -DLLAMA_BUILD_TOOLS=ON \
               -DLLAMA_BUILD_EXAMPLES=OFF \
               -DLLAMA_BUILD_TESTS=OFF \
-              -DLLAMA_BUILD_SERVER=OFF
+              -DLLAMA_BUILD_SERVER=ON
 
 # Use build/ for output, so that it is in the .gitignore of upstream
 %:

@@ -8,10 +8,10 @@ Subject: improve-cmake-build
  2 files changed, 8 insertions(+)
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 630b2cd..0c225c5 100644
+index 4192af7..39db7ef 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -142,4 +142,8 @@ if (BUILD_SHARED_LIBS)
+@@ -152,4 +152,8 @@ if (BUILD_SHARED_LIBS)
      set_target_properties(llama PROPERTIES POSITION_INDEPENDENT_CODE ON)
      target_compile_definitions(llama PRIVATE LLAMA_BUILD)
      target_compile_definitions(llama PUBLIC  LLAMA_SHARED)
@@ -21,10 +21,10 @@ index 630b2cd..0c225c5 100644
 +    endif()
  endif()
 diff --git a/tools/mtmd/CMakeLists.txt b/tools/mtmd/CMakeLists.txt
-index 2381012..9ab925b 100644
+index e7f3067..5a37e85 100644
 --- a/tools/mtmd/CMakeLists.txt
 +++ b/tools/mtmd/CMakeLists.txt
-@@ -35,6 +35,10 @@ set_target_properties(mtmd
+@@ -56,6 +56,10 @@ set_target_properties(mtmd
      PROPERTIES
      PUBLIC_HEADER "${MTMD_PUBLIC_HEADERS}")
  

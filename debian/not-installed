@@ -1,5 +1,6 @@
 # Most executables produced are not stable enough to be distributed
 /usr/bin/llama-*
+/usr/bin/rpc-server
 /usr/libexec/*/ggml/llama-*
 
 # Python is not supported
