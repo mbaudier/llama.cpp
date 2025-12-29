@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 #export DH_VERBOSE = 1
 
-export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 # Derivative
 distribution := $(shell lsb_release --id --short)
@@ -18,8 +18,6 @@ include /usr/share/dpkg/architecture.mk
 # FOR DEB_VERSION_UPSTREAM
 include /usr/share/dpkg/pkg-info.mk
 
-FLAGS_ARGEO=-O3 -g -DNDEBUG
-
 CMAKE_FLAGS = \
               -DCMAKE_BUILD_TYPE=RelWithDebInfo \
               -DLLAMA_BUILD_NUMBER=$(subst 0.0.,,$(DEB_VERSION_UPSTREAM)) \
@@ -35,13 +33,19 @@ CMAKE_FLAGS = \
               -DLLAMA_BUILD_SERVER=ON \
 
 ifeq ($(DEB_TARGET_ARCH),arm64)
+FLAGS_ARGEO=-O2 -g -DNDEBUG
+
 ifeq ($(distribution),Ubuntu)
 # Optimize for Raspberry Pi 5 on Ubuntu
 #FLAGS_ARGEO += -mcpu=cortex-a76+crc+crypto
-CMAKE_OPTS += -DGGML_NATIVE=ON
+CMAKE_OPTS += -DGGML_CPU_ARM_ARCH=armv8-a
 else
 CMAKE_FLAGS += -DGGML_CPU_ARM_ARCH=armv8-a
 endif
+
+else
+FLAGS_ARGEO=-O3 -g -DNDEBUG
+
 endif
 
 CMAKE_FLAGS += -DCMAKE_C_FLAGS_RELWITHDEBINFO="$(FLAGS_ARGEO)" \
