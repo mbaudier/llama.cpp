@@ -32,7 +32,7 @@ CMAKE_FLAGS = \
               -DLLAMA_BUILD_TOOLS=ON \
               -DLLAMA_BUILD_EXAMPLES=OFF \
               -DLLAMA_BUILD_TESTS=OFF \
-              -DLLAMA_BUILD_SERVER=ON
+              -DLLAMA_BUILD_SERVER=ON \
 
 ifeq ($(DEB_TARGET_ARCH),arm64)
 ifeq ($(distribution),Ubuntu)

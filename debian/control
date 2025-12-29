@@ -8,6 +8,7 @@ Vcs-Git: https://git.djapps.eu/pkg/ggml/sources/llama.cpp
 Homepage: https://github.com/ggml-org/llama.cpp/
 Build-Depends: dh-sequence-bash-completion,
                cmake,
+               lsb-release,
                debhelper-compat (= 13),
                libcurl4-openssl-dev,
                libggml-dev,
