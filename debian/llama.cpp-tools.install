@@ -1,11 +1,14 @@
-/usr/bin/llama-cli
-/usr/libexec/*/ggml/llama-cli
+/usr/bin/llama-completion
+/usr/libexec/*/ggml/llama-completion
 
 /usr/bin/llama-quantize
 /usr/libexec/*/ggml/llama-quantize
 
 /usr/bin/llama-bench
 /usr/libexec/*/ggml/llama-bench
+
+/usr/bin/llama-cli
+/usr/libexec/*/ggml/llama-cli
 
 /usr/bin/llama-mtmd-cli
 /usr/libexec/*/ggml/llama-mtmd-cli
