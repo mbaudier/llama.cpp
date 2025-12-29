@@ -3,6 +3,16 @@
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
+# Derivative
+distribution := $(shell lsb_release --id --short)
+distrel := $(shell lsb_release --codename --short)
+derivative := $(shell if dpkg-vendor --derives-from Ubuntu; then echo Ubuntu; \
+               elif dpkg-vendor --derives-from Debian; then echo Debian; \
+               else echo Unknown; fi)
+ifeq ($(distrel),n/a)
+  distrel := sid
+endif
+
 # For multiarch
 include /usr/share/dpkg/architecture.mk
 # FOR DEB_VERSION_UPSTREAM
