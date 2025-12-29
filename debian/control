@@ -35,7 +35,7 @@ Section: libs
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: libllama0,
+Depends: libllama0 (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends},
 # Explicitly conflict with Debian official
@@ -47,7 +47,7 @@ Description: Inference of large language models in pure C/C++ (multimodal librar
 Package: llama.cpp-tools
 Architecture: any
 Depends: libllama0 (= ${binary:Version}),
-         curl,
+         libmtmd0 (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends},
 Description: Inference of large language models in pure C/C++ (tools)
@@ -62,19 +62,10 @@ Description: Inference of large language models in pure C/C++ (tools)
  llama-bench: benchmarking of large language models or
  ggml backends.
 
-Package: llama.cpp-tools-multimodal
-Architecture: any
-Depends: libmtmd0 (= ${binary:Version}),
-         curl,
-         ${misc:Depends},
-         ${shlibs:Depends},
-Description: Inference of large language models in pure C/C++ (multimodal tools)
- llama-mtmd-cli: multimodal support.
-
 Package: llama.cpp-tools-server
 Architecture: any
-Depends: libmtmd0 (= ${binary:Version}),
-         curl,
+Depends: libllama0 (= ${binary:Version}),
+         libmtmd0 (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends},
 Description: Inference of large language models in pure C/C++ (server tools)
