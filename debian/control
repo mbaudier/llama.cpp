@@ -71,6 +71,15 @@ Depends: libmtmd0 (= ${binary:Version}),
 Description: Inference of large language models in pure C/C++ (multimodal tools)
  llama-mtmd-cli: multimodal support.
 
+Package: llama.cpp-tools-server
+Architecture: any
+Depends: libmtmd0 (= ${binary:Version}),
+         curl,
+         ${misc:Depends},
+         ${shlibs:Depends},
+Description: Inference of large language models in pure C/C++ (server tools)
+ llama-server: HTTP server support.
+
 Package: libllama-dev
 Section: libdevel
 Architecture: any
