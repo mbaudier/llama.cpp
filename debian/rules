@@ -33,13 +33,15 @@ CMAKE_FLAGS = \
               -DLLAMA_BUILD_SERVER=ON \
 
 ifeq ($(DEB_TARGET_ARCH),arm64)
-FLAGS_ARGEO=-O2 -g -DNDEBUG
+FLAGS_ARGEO=-O3 -g -DNDEBUG
 
 ifeq ($(distribution),Ubuntu)
 # Optimize for Raspberry Pi 5 on Ubuntu
 #FLAGS_ARGEO += -mcpu=cortex-a76+crc+crypto
-CMAKE_FLAGS += -DGGML_CPU_ARM_ARCH=armv8-a
+#CMAKE_FLAGS += -DGGML_CPU_ARM_ARCH=armv8-a
+CMAKE_FLAGS += -DGGML_NATIVE=ON
 else
+#CMAKE_FLAGS += -DGGML_CPU_ARM_ARCH=armv8-a
 CMAKE_FLAGS += -DGGML_CPU_ARM_ARCH=armv8-a
 endif
 
