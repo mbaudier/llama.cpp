@@ -37,7 +37,8 @@ CMAKE_FLAGS = \
 ifeq ($(DEB_TARGET_ARCH),arm64)
 ifeq ($(distribution),Ubuntu)
 # Optimize for Raspberry Pi 5 on Ubuntu
-FLAGS_ARGEO += -mcpu=cortex-a76+crc+crypto
+#FLAGS_ARGEO += -mcpu=cortex-a76+crc+crypto
+CMAKE_OPTS += -DGGML_NATIVE=ON
 else
 CMAKE_FLAGS += -DGGML_CPU_ARM_ARCH=armv8-a
 endif
