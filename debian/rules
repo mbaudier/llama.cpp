@@ -38,7 +38,7 @@ FLAGS_ARGEO=-O2 -g -DNDEBUG
 ifeq ($(distribution),Ubuntu)
 # Optimize for Raspberry Pi 5 on Ubuntu
 #FLAGS_ARGEO += -mcpu=cortex-a76+crc+crypto
-CMAKE_OPTS += -DGGML_CPU_ARM_ARCH=armv8-a
+CMAKE_FLAGS += -DGGML_CPU_ARM_ARCH=armv8-a
 else
 CMAKE_FLAGS += -DGGML_CPU_ARM_ARCH=armv8-a
 endif
