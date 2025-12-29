@@ -27,14 +27,14 @@ CMAKE_FLAGS = \
 ifeq ($(DEB_TARGET_ARCH),arm64)
 ifeq ($(distribution),Ubuntu)
 # Optimize for Raspberry Pi 5 on Ubuntu
-FLAGS_ARGEO+= -mcpu=cortex-a76+crc+crypto
+FLAGS_ARGEO += -mcpu=cortex-a76+crc+crypto
 else
-CMAKE_OPTS += -DGGML_CPU_ARM_ARCH=armv8-a
+CMAKE_FLAGS += -DGGML_CPU_ARM_ARCH=armv8-a
 endif
 endif
 
-CMAKE_OPTS += -DCMAKE_C_FLAGS_RELWITHDEBINFO="$(FLAGS_ARGEO)" \
-              -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="$(FLAGS_ARGEO)" \
+CMAKE_FLAGS += -DCMAKE_C_FLAGS_RELWITHDEBINFO="$(FLAGS_ARGEO)" \
+               -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="$(FLAGS_ARGEO)" \
 
 # Use build/ for output, so that it is in the .gitignore of upstream
 %:
