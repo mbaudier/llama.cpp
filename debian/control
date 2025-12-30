@@ -61,14 +61,7 @@ Description: Inference of large language models in pure C/C++ (tools)
  .
  llama-bench: benchmarking of large language models or
  ggml backends.
-
-Package: llama.cpp-tools-server
-Architecture: any
-Depends: libllama0 (= ${binary:Version}),
-         libmtmd0 (= ${binary:Version}),
-         ${misc:Depends},
-         ${shlibs:Depends},
-Description: Inference of large language models in pure C/C++ (server tools)
+ .
  llama-server: HTTP server support.
 
 Package: libllama-dev
