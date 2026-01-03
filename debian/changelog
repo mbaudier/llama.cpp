@@ -1,3 +1,10 @@
+llama.cpp (0.0.7599-1) unstable; urgency=medium
+
+  * Update upstream
+  * Drop .so version patch, now provided by upstream
+
+ -- Mathieu Baudier <mbaudier@argeo.org>  Sat, 03 Jan 2026 10:43:52 +0000
+
 llama.cpp (0.0.7446-1) unstable; urgency=medium
 
   * Update upstream
