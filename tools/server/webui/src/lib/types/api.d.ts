@@ -176,6 +176,7 @@ export interface ApiLlamaCppServerProps {
 	bos_token: string;
 	eos_token: string;
 	build_info: string;
+	webui_settings?: Record<string, string | number | boolean>;
 }
 
 export interface ApiChatCompletionRequest {
@@ -185,6 +186,7 @@ export interface ApiChatCompletionRequest {
 	}>;
 	stream?: boolean;
 	model?: string;
+	return_progress?: boolean;
 	// Reasoning parameters
 	reasoning_format?: string;
 	// Generation parameters
@@ -340,7 +342,9 @@ export interface ApiProcessingState {
 	tokensPerSecond?: number;
 	// Progress information from prompt_progress
 	progressPercent?: number;
+	promptProgress?: ChatMessagePromptProgress;
 	promptTokens?: number;
+	promptMs?: number;
 	cacheTokens?: number;
 }
 
