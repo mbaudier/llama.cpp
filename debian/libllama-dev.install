@@ -1,8 +1,10 @@
 /usr/include/llama*.h
 include/llama-cpp.h /usr/include/
+/usr/include/mtmd*.h
 
 # Symbolic links
 /usr/lib/*/libllama.so
+/usr/lib/*/libmtmd.so
 
 /usr/lib/*/pkgconfig/*.pc
 /usr/lib/*/cmake/llama/llama-*.cmake

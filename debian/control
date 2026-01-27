@@ -69,19 +69,9 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends: libllama0 (= ${binary:Version}),
+         libmtmd0 (= ${binary:Version}),
          libggml-dev,
          ${misc:Depends},
 Description: Inference of large language models in pure C/C++ (development files)
  Development files required for building software based on the
  stable and documented llama.cpp API.
-
-Package: libmtmd-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends: libmtmd0 (= ${binary:Version}),
-         libllama-dev (= ${binary:Version}),
-         ${misc:Depends},
-Description: Inference of large language models in pure C/C++ (multimodal development files)
- Development files required for building software based on the
- multimodal llama.cpp API.
