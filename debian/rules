@@ -79,6 +79,10 @@ execute_after_dh_auto_install-arch:
 		[ "$$progname_base" != "llama-cli" ] || continue ; \
 		ln -r -s completions/llama-cli completions/$$progname_base; \
 	done
+	
+	# RPC server
+	mv debian/tmp/usr/bin/rpc-server debian/tmp/usr/libexec/$(DEB_TARGET_MULTIARCH)/ggml/ggml-rpc-server
+	ln -s --relative -t debian/tmp/usr/bin debian/tmp/usr/libexec/$(DEB_TARGET_MULTIARCH)/ggml/ggml-rpc-server
 
 # No tests for now, as many need some kind of model we don't have
 override_dh_auto_test:

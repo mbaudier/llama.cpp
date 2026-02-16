@@ -21,11 +21,9 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: libggml0,
-         libggml-backend-cpu,
+         libggml0-backend-cpu,
          ${misc:Depends},
          ${shlibs:Depends},
-# Explicitly conflict with Debian official
-Conflicts: llama.cpp
 Description: Inference of large language models in pure C/C++ (shared library)
  llama.cpp leverages the ggml tensor library in order to run
  large language models (LLMs) provided in the GGUF file format.
@@ -38,8 +36,6 @@ Pre-Depends: ${misc:Pre-Depends}
 Depends: libllama0 (= ${binary:Version}),
          ${misc:Depends},
          ${shlibs:Depends},
-# Explicitly conflict with Debian official
-Conflicts: llama.cpp
 Description: Inference of large language models in pure C/C++ (multimodal library)
  mtmd provides multimodal inference.
 
@@ -55,6 +51,10 @@ Description: Inference of large language models in pure C/C++ (tools)
  It typically allows one to run one-shot prompts or to "chat"
  with a large language model.
  .
+ llama-completion: simple tool for text-only inference.
+ .
+ llama-mtmd-cli: simple tool for vision inference.
+ .
  llama-quantize: utility to "quantize" a large language model
  GGUF file. Quantizing is the process of reducing the precision of
  the underlying neural-network at  aminimal cost to its accuracy.
@@ -63,6 +63,15 @@ Description: Inference of large language models in pure C/C++ (tools)
  ggml backends.
  .
  llama-server: HTTP server support.
+
+# This should actually be in ggml
+Package: llama.cpp-rpc
+Architecture: any
+Depends: libggml0-backend-rpc,
+         ${misc:Depends},
+         ${shlibs:Depends},
+Description: Inference of large language models in pure C/C++ (RPC server)
+ ggml-rpc-server: ggml RPC server.
 
 Package: libllama-dev
 Section: libdevel
