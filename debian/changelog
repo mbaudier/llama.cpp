@@ -1,3 +1,9 @@
+llama.cpp (0.0.8611-1) unstable; urgency=medium
+
+  * Update upstream
+
+ -- Mathieu Baudier <mbaudier@argeo.org>  Fri, 03 Apr 2026 12:27:17 +0000
+
 llama.cpp (0.0.8067-1) unstable; urgency=medium
 
   * Update upstream
