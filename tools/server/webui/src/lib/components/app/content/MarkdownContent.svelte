@@ -22,15 +22,12 @@
 		IMAGE_NOT_ERROR_BOUND_SELECTOR,
 		DATA_ERROR_BOUND_ATTR,
 		DATA_ERROR_HANDLED_ATTR,
-		BOOL_TRUE_STRING
-	} from '$lib/constants/markdown';
-	import { UrlPrefix } from '$lib/enums';
+		BOOL_TRUE_STRING,
+		SETTINGS_KEYS
+	} from '$lib/constants';
+	import { ColorMode, UrlProtocol } from '$lib/enums';
 	import { FileTypeText } from '$lib/enums/files';
-	import {
-		highlightCode,
-		detectIncompleteCodeBlock,
-		type IncompleteCodeBlock
-	} from '$lib/utils/code';
+	import { highlightCode, detectIncompleteCodeBlock, type IncompleteCodeBlock } from '$lib/utils';
 	import '$styles/katex-custom.scss';
 	import githubDarkCss from 'highlight.js/styles/github-dark.css?inline';
 	import githubLightCss from 'highlight.js/styles/github.css?inline';
@@ -38,6 +35,8 @@
 	import { ActionIconsCodeBlock, DialogCodePreview } from '$lib/components/app';
 	import { createAutoScrollController } from '$lib/hooks/use-auto-scroll.svelte';
 	import type { DatabaseMessageExtra } from '$lib/types/database';
+	import { config } from '$lib/stores/settings.svelte';
+	import { fadeInView } from '$lib/actions/fade-in-view.svelte';
 
 	interface Props {
 		attachments?: DatabaseMessageExtra[];
@@ -503,7 +502,7 @@
 
 		// Don't handle data URLs or already-handled images
 		if (
-			img.src.startsWith(UrlPrefix.DATA) ||
+			img.src.startsWith(UrlProtocol.DATA) ||
 			img.dataset[DATA_ERROR_HANDLED_ATTR] === BOOL_TRUE_STRING
 		)
 			return;
@@ -558,7 +557,7 @@
 
 	$effect(() => {
 		const currentMode = mode.current;
-		const isDark = currentMode === 'dark';
+		const isDark = currentMode === ColorMode.DARK;
 
 		loadHighlightTheme(isDark);
 	});
@@ -593,9 +592,14 @@
 	});
 </script>
 
-<div bind:this={containerRef} class={className}>
+<div
+	bind:this={containerRef}
+	class="{className}{config()[SETTINGS_KEYS.FULL_HEIGHT_CODE_BLOCKS]
+		? ' full-height-code-blocks'
+		: ''}"
+>
 	{#each renderedBlocks as block (block.id)}
-		<div class="markdown-block" data-block-id={block.id}>
+		<div class="markdown-block" data-block-id={block.id} use:fadeInView={{ skipIfVisible: true }}>
 			<!-- eslint-disable-next-line no-at-html-tags -->
 			{@html block.html}
 		</div>
@@ -615,8 +619,8 @@
 				<ActionIconsCodeBlock
 					code={incompleteCodeBlock.code}
 					language={incompleteCodeBlock.language || 'text'}
-					disabled={true}
-					onPreview={(code: string, lang: string) => {
+					disabled
+					onPreview={(code, lang) => {
 						previewCode = code;
 						previewLanguage = lang;
 						previewDialogOpen = true;
@@ -648,7 +652,6 @@
 />
 
 <style>
-	.markdown-block,
 	.markdown-block--unstable {
 		display: contents;
 	}
@@ -912,6 +915,16 @@
 		overflow-x: auto;
 		padding: 3rem 1rem 1rem;
 		line-height: 1.3;
+	}
+
+	.full-height-code-blocks :global(.code-block-wrapper) {
+		max-height: none;
+	}
+
+	.full-height-code-blocks :global(.code-block-scroll-container),
+	.full-height-code-blocks .streaming-code-scroll-container {
+		max-height: none;
+		overflow-y: visible;
 	}
 
 	div :global(.code-block-header) {
