@@ -3,6 +3,11 @@
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=-all
 
+# clang build
+export CC = clang
+export CXX = clang++
+export LD = ld.lld
+
 # Derivative
 distribution := $(shell lsb_release --id --short)
 distrel := $(shell lsb_release --codename --short)
@@ -26,7 +31,7 @@ CMAKE_FLAGS = \
               \
               -DCMAKE_LIBRARY_PATH=/usr/libexec/$(DEB_TARGET_MULTIARCH)/ggml \
               \
-              -DLLAMA_CURL=ON \
+              -DLLAMA_OPENSSL=ON \
               -DLLAMA_BUILD_TOOLS=ON \
               -DLLAMA_BUILD_EXAMPLES=OFF \
               -DLLAMA_BUILD_TESTS=OFF \
@@ -34,6 +39,12 @@ CMAKE_FLAGS = \
 
 FLAGS_ARGEO=-O3 -g -DNDEBUG
 
+# clang build
+CMAKE_FLAGS += -DCMAKE_C_COMPILER=clang \
+               -DCMAKE_CXX_COMPILER="clang++" \
+               -DCMAKE_CXX_FLAGS="-stdlib=libc++" \
+               -DCMAKE_LINKER_TYPE=LLD \
+ 
 CMAKE_FLAGS += -DCMAKE_C_FLAGS_RELWITHDEBINFO="$(FLAGS_ARGEO)" \
                -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="$(FLAGS_ARGEO)" \
 
@@ -71,3 +82,6 @@ execute_after_dh_auto_install-arch:
 # No tests for now, as many need some kind of model we don't have
 override_dh_auto_test:
 	:
+	
+override_dh_dwz:
+	# Skip dwz optimization when using clang

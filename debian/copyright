@@ -2,20 +2,9 @@ Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: llama.cpp
 Upstream-Contact: https://github.com/ggml-org/llama.cpp/issues
 Source: https://github.com/ggml-org/llama.cpp
-#Files-Excluded: 
-# models/*
-# ggml/*
-# ggml/src/ggml-kompute/kompute/*
-# usr/share/doc/llama-cpp-dev/examples/llama.android/gradlew
-#Comment: The models/ directory contains the "vocabularies" (mapping between token id and strings)
-# used by some publicly available large language models, most of them being
-# not DFSG compliant.
-# We use the version of ggml packaged separately and
-# thus consider ggml/ as third-party code here.
-# Other excludes are third-party code (which is not used here).
 
 Files: *
-Copyright: Copyright (c) 2023-2025 The llama.cpp authors
+Copyright: Copyright (c) 2023-2026 The llama.cpp authors
 License: Expat 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +25,7 @@ License: Expat
  SOFTWARE.
 
 Files: debian/*
-Copyright: 2024-2025 Mathieu Baudier <mbaudier@argeo.org>
+Copyright: 2024-2026 Mathieu Baudier <mbaudier@argeo.org>
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
